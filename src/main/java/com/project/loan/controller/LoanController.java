@@ -1,6 +1,8 @@
 package com.project.loan.controller;
 
 import com.project.loan.model.Loan;
+import com.project.loan.config.BusinessException;
+import com.project.loan.service.LoanService;
 import com.project.loan.service.impl.LoanServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/loans")
 public class LoanController {
     @Autowired
-    private LoanServiceImpl service;
+    private LoanService service;
 
     @GetMapping
     public ResponseEntity<List<Loan>> getLoan() {
@@ -34,7 +36,7 @@ public class LoanController {
     }
 
     @PostMapping()
-    public ResponseEntity<Loan> saveLoan(@RequestBody Loan loan) {
+    public ResponseEntity<Loan> saveLoan(@RequestBody Loan loan) throws BusinessException {
         Loan loan1 = service.save(loan);
         if (loan1 == null) {
             return ResponseEntity.notFound().build();
@@ -52,10 +54,11 @@ public class LoanController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLoan(@PathVariable Long id) {
-        boolean deleted = service.delete(id);
-        if (deleted) {
+        try {
+            service.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
-
 }
