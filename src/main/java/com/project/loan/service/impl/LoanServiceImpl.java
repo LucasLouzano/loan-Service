@@ -1,11 +1,16 @@
 package com.project.loan.service.impl;
 
+import com.project.loan.config.BusinessException;
+import com.project.loan.dto.CustomerDTO;
+import com.project.loan.model.CustomerClient;
 import com.project.loan.model.Loan;
 import com.project.loan.repository.LoanRepository;
 import com.project.loan.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,15 +18,24 @@ import java.util.Optional;
 public class LoanServiceImpl implements LoanService {
     @Autowired
     private LoanRepository repository;
+
+    @Autowired
+    private CustomerClient customerClient;
+
     @Override
     public Loan findByid(Long id) {
         return repository.findById(id).orElse(null);
     }
 
     @Override
-    public Loan save(Loan loan) {
+    public Loan save(Loan loan) throws BusinessException {
+        CustomerDTO client = customerClient.buscarClientePorId(loan.getCustomerId());
+        if (client == null) {
+            throw new BusinessException("Cliente não encontrado.");
+        }
         return repository.save(loan);
     }
+
     @Override
     public List<Loan> findAll() {
         return repository.findAll();
@@ -41,11 +55,9 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public boolean delete(Long id) {
-        if(repository.existsById(id)){
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void delete(Long id) {
+        Loan loan = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        repository.delete(loan);
     }
 }
