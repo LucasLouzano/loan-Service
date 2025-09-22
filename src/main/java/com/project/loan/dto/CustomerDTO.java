@@ -10,5 +10,7 @@ public record CustomerDTO(
         String endereco,
         String cidade,
         String estado,
-        String cep
+        String cep,
+        String cargo,
+        double salarioMensal
 ) {}
