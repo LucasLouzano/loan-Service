@@ -1,4 +1,4 @@
-package com.project.loan.model;
+package com.project.loan.api;
 
 import com.project.loan.dto.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
