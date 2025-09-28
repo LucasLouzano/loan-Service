@@ -12,5 +12,6 @@ public record CustomerDTO(
         String estado,
         String cep,
         String cargo,
+        double valorAlojamento,
         double salarioMensal
 ) {}
