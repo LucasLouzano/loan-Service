@@ -66,19 +66,19 @@ public class LoanServiceImpl implements LoanService {
         if (cliente == null) {
             throw new BusinessException("Cliente não encontrado.");
         }
-        // Validação de idade
+        // Validar idade
         int idade = Period.between(cliente.dataNascimento(), LocalDate.now()).getYears();
         if (idade < 18 || idade > 70) {
             throw new BusinessException("Cliente deve ter entre 18 e 70 anos.");
         }
 
-        // Validação de salário mínimo
+        // Validar salário mínimo
         double salarioMensal = cliente.salarioMensal();
         if (salarioMensal < SALARIO_MINIMO) {
             throw new BusinessException("Salário abaixo do mínimo permitido (R$ " + SALARIO_MINIMO + ").");
         }
 
-        // Validação de valor da parcela
+        // Validar valor da parcela
         BigDecimal valorEmprestimo = loan.getValor();
         int numeroParcelas = loan.getNumeroParcelas();
         BigDecimal parcelaMensal = valorEmprestimo.divide(BigDecimal.valueOf(numeroParcelas), RoundingMode.HALF_UP);
@@ -87,12 +87,12 @@ public class LoanServiceImpl implements LoanService {
             throw new BusinessException("Parcela mensal excede 30% do salário do cliente.");
         }
 
-        // Validação de valor total do empréstimo
+        // Validar valor total do empréstimo
         if (valorEmprestimo.doubleValue() > salarioMensal * 10) {
             throw new BusinessException("Valor do empréstimo excede o limite de 10x o salário mensal.");
         }
 
-        // Validação de número de parcelas
+        // Validar número de parcelas
         if (numeroParcelas > 60) {
             throw new BusinessException("Número de parcelas excede o limite de 60 meses.");
         }
